@@ -1,12 +1,7 @@
 <?php
     abstract class Controller extends AbstractController 
-    {	
-        protected $title;
-        protected $meta_desc;
-        protected $meta_key;
-        protected $mail = null;
+    {
         protected $url_active;
-        protected $section_id = 0;
         
         public function __construct() 
         {

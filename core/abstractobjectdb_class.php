@@ -73,7 +73,7 @@
 
         public function isSaved($id_name = "id")
         {
-            return $this->getID($id_name = "id") > 0;
+            return $this->getID($id_name) > 0;
         }
         
         public function getID($id_name = "id")

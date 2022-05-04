@@ -13,7 +13,7 @@
             $this->render($this->renderData(["response" => $json], "index_json"));
         }
 
-        public function actionAdd()
+        public function actionAddProduct()
         {
             $response = true;
             $data = $this->request;
@@ -55,11 +55,8 @@
                 try {
                     if ($product) {
                         $response = $product->delete('sku');
-                    } else {
-                        $response = false;
                     }
                 } catch (Exception $e) {
-                    $response = false;
                 }
             }
 
@@ -73,6 +70,24 @@
         public function actionGetAllTypes()
         {
             $types = ProductTypeSwitcherDB::getAllTypes();
+
+            $json = json_encode([
+                'count' => count($types),
+                'response' => $types
+            ]);
+
+            $this->render($this->renderData(["response" => $json], "index_json"));
+        }
+
+        public function actionGetProductUnits()
+        {
+            $data = $this->request;
+            $types = null;
+            if (!$data->type_id) {
+                $types = ProductTypeUnitsDB::getAllUnits(true);
+            } else {
+                $types = ProductTypeUnitsDB::getUnitsOnTypeID($data->type_id, true);
+            }
 
             $json = json_encode([
                 'count' => count($types),
