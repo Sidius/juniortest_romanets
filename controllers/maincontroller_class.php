@@ -19,8 +19,21 @@
             $data = $this->request;
 
             $product = new ProductDB();
-            $product->sku = $data->sku;
-            $product->name = $data->name;
+            if ($data->sku) {
+                $product_check = ProductDB::getProductOnSKU($data->sku);
+                if (!$product_check) {
+                    $product->sku = $data->sku;
+                } else {
+                    $response = false;
+                }
+            } else {
+                $response = false;
+            }
+            if ($data->name) {
+                $product->name = $data->name;
+            } else {
+                $response = false;
+            }
             if (is_numeric($data->price)) {
                 $product->price = (float)$data->price;
             } else {
@@ -38,9 +51,56 @@
                 $response = false;
             }
 
+            if ($response) {
+                $response = $product->save('sku');
+            }
+
             $json = json_encode([
-                'count' => 0,
-                'response' => $product
+                'response' => $response
+            ]);
+
+            $this->render($this->renderData(["response" => $json], "index_json"));
+        }
+
+        public function actionAddProductAttribute()
+        {
+            $response = true;
+            $data = $this->request;
+
+            $unitValue = new ProductUnitsValuesDB();
+            if ($data->productSku) {
+                $product = ProductDB::getProductOnSKU($data->productSku);
+                if ($product) {
+                    $unitValue->productSku = $data->productSku;
+                } else {
+                    $response = false;
+                }
+            } else {
+                $response = false;
+            }
+            if (is_numeric($data->productTypeUnitId)) {
+                $id = (int)$data->productTypeUnitId;
+                $unit = ProductTypeUnitsDB::getUnitOnID($id, true);
+                if ($unit) {
+                    $unitValue->productTypeUnitId = $id;
+                } else {
+                    $response = false;
+                }
+            } else {
+                $response = false;
+            }
+            if (is_numeric($data->productTypeUnitId)) {
+                $unitValue->value = (float)$data->value;
+            } else {
+                $response = false;
+            }
+
+            if ($response) {
+                $response = $unitValue->save();
+            }
+
+            $json = json_encode([
+                'response' => $response
             ]);
 
             $this->render($this->renderData(["response" => $json], "index_json"));

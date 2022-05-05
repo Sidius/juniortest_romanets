@@ -71,8 +71,18 @@
             return $this->postInit();
         }
 
-        public function isSaved($id_name = "id")
+        public function isSaved($id_name = "id", $table = null, $id = null)
         {
+            if ($table && $id) {
+                $select = new Select(self::$db);
+                $select->from($table, "*");
+                $select->where("`$id_name` = ".self::$db->getSQ(), [$id]);
+                $data = self::$db->select($select);
+                if ($data) {
+                    return true;
+                }
+                return false;
+            }
             return $this->getID($id_name) > 0;
         }
         
@@ -81,9 +91,9 @@
             return $this->$id_name;
         }
         
-        public function save() 
+        public function save($id_name = "id")
         {
-            $update = $this->isSaved();
+            $update = $this->isSaved($id_name, $this->table_name, $this->getID($id_name));
             if ($update) 
             {
                 $commit = $this->preUpdate();
@@ -120,7 +130,7 @@
             {
                 if ($update) 
                 {
-                    $success = self::$db->update($this->table_name, $row, "`id` = ".self::$db->getSQ(), [$this->getID()]);
+                    $success = self::$db->update($this->table_name, $row, "`$id_name` = ".self::$db->getSQ(), [$this->getID()]);
                     if (!$success) 
                     {
                         throw new Exception();

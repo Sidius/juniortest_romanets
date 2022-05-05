@@ -5,7 +5,6 @@
         public function __construct()
         {
             parent::__construct(self::$table);
-            $this->add("id", "ValidateID");
             $this->add("productSku", "ValidateTitle");
             $this->add("productTypeUnitId", "ValidateID");
             $this->add("value", "ValidateText");
@@ -45,6 +44,7 @@
             return [
                 'value' => (float)$this->value,
                 'unit' => $this->productTypeUnit,
+                'productTypeUnitId' => (int)$this->productTypeUnitId,
             ];
         }
     }

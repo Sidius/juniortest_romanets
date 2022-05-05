@@ -35,6 +35,7 @@
         public function jsonSerialize()
         {
             return [
+                'id' => (int)$this->getID(),
                 'title' => $this->title,
                 'unit' => $this->unit,
             ];
