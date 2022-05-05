@@ -3,13 +3,13 @@
     {	
         public static function replaceSEF($link, $address = "") 
         {
-            if ((strpos($link, "//") !== false) && (strpos($link, Config::ADDRESS) === false)) 
+            if ((strpos($link, "//") !== false) && (strpos($link, ADDRESS) === false)) 
             {
                 return $link;
             }
-            if (strpos($link, Config::ADDRESS) === 0) 
+            if (strpos($link, ADDRESS) === 0) 
             {
-                $link = substr($link, mb_strlen(Config::ADDRESS));
+                $link = substr($link, mb_strlen(ADDRESS));
             }
             if ($link === "/") 
             {
@@ -38,9 +38,9 @@
         
         public static function getRequest($uri) 
         {
-            if (strpos($uri, Config::ADDRESS) !== false)
+            if (strpos($uri, ADDRESS) !== false)
             {
-                $uri = substr($uri, strlen(Config::ADDRESS));
+                $uri = substr($uri, strlen(ADDRESS));
             }
             if ($uri === "/") 
             {
