@@ -78,7 +78,7 @@
             } else {
                 $response = false;
             }
-            if (is_numeric($data->productTypeUnitId)) {
+            if ($data->productTypeUnitId && is_numeric($data->productTypeUnitId)) {
                 $id = (int)$data->productTypeUnitId;
                 $unit = ProductTypeUnitsDB::getUnitOnID($id, true);
                 if ($unit) {
@@ -89,14 +89,16 @@
             } else {
                 $response = false;
             }
-            if (is_numeric($data->productTypeUnitId)) {
+            if ($data->value && is_numeric($data->value)) {
                 $unitValue->value = (float)$data->value;
             } else {
                 $response = false;
             }
 
-            if ($response) {
+            if ($response && !$unitValue->hasValue()) {
                 $response = $unitValue->save();
+            } else {
+                $response = false;
             }
 
             $json = json_encode([

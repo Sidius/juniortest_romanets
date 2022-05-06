@@ -10,6 +10,29 @@
             $this->add("value", "ValidateText");
         }
 
+        public function hasValue()
+        {
+            $units = self::getAllUnitsValuesOnSkuTypeUnit($this->productSku, $this->productTypeUnitId);
+            return $units != null;
+        }
+
+        public static function getAllUnitsValuesOnSkuTypeUnit($sku, $typeUnitId, $post_handling = false)
+        {
+            $select = self::getBaseSelect();
+            $select->where("`productSku` = ".self::$db->getSQ(), [$sku]);
+            $select->where("`productTypeUnitId` = ".self::$db->getSQ(), [$typeUnitId]);
+            $data = self::$db->select($select);
+            $unitsValues = ObjectDB::buildMultiple(__CLASS__, $data, "id", false);
+            if ($post_handling)
+            {
+                foreach ($unitsValues as $unitsValue)
+                {
+                    $unitsValue->postHandling();
+                }
+            }
+            return $unitsValues;
+        }
+
         public static function getAllUnitsValuesOnSku($sku, $post_handling = false)
         {
             $select = self::getBaseSelect();

@@ -152,13 +152,13 @@
             return $this->postInsert();
         }
         
-        public function delete($id_name = 'id')
+        public function delete($id_name = 'id', $table = null, $id = null)
         {
-            if (!$this->isSaved($id_name))
+            if ($table && $id && !$this->isSaved($id_name, $table, $id))
             {
                 return false;
             }
-            if (!$this->preDelete()) 
+            if (!$this->preDelete())
             {
                 return false;
             }
