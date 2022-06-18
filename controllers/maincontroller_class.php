@@ -23,36 +23,37 @@
                 $product_check = ProductDB::getProductOnSKU($data->sku);
                 if (!$product_check) {
                     $product->sku = $data->sku;
-                } else {
-                    $response = false;
-                }
-            } else {
-                $response = false;
-            }
-            if ($data->name) {
-                $product->name = $data->name;
-            } else {
-                $response = false;
-            }
-            if (is_numeric($data->price)) {
-                $product->price = (float)$data->price;
-            } else {
-                $response = false;
-            }
-            if (is_numeric($data->productTypeID)) {
-                $id = (int)$data->productTypeID;
-                $type = ProductTypeSwitcherDB::getTypeOnID($id);
-                if ($type) {
-                    $product->productType = $id;
-                } else {
-                    $response = false;
-                }
-            } else {
-                $response = false;
-            }
 
-            if ($response) {
-                $response = $product->save('sku');
+                    if ($data->name) {
+                        $product->name = $data->name;
+                    } else {
+                        $response = false;
+                    }
+                    if (is_numeric($data->price)) {
+                        $product->price = (float)$data->price;
+                    } else {
+                        $response = false;
+                    }
+                    if (is_numeric($data->productTypeID)) {
+                        $id = (int)$data->productTypeID;
+                        $type = ProductTypeSwitcherDB::getTypeOnID($id);
+                        if ($type) {
+                            $product->productType = $id;
+                        } else {
+                            $response = false;
+                        }
+                    } else {
+                        $response = false;
+                    }
+
+                    if ($response) {
+                        $response = $product->save('sku');
+                    }
+                } else {
+                    $response = false;
+                }
+            } else {
+                $response = false;
             }
 
             $json = json_encode([
@@ -72,31 +73,31 @@
                 $product = ProductDB::getProductOnSKU($data->productSku);
                 if ($product) {
                     $unitValue->productSku = $data->productSku;
-                } else {
-                    $response = false;
-                }
-            } else {
-                $response = false;
-            }
-            if ($data->productTypeUnitId && is_numeric($data->productTypeUnitId)) {
-                $id = (int)$data->productTypeUnitId;
-                $unit = ProductTypeUnitsDB::getUnitOnID($id, true);
-                if ($unit) {
-                    $unitValue->productTypeUnitId = $id;
-                } else {
-                    $response = false;
-                }
-            } else {
-                $response = false;
-            }
-            if ($data->value && is_numeric($data->value)) {
-                $unitValue->value = (float)$data->value;
-            } else {
-                $response = false;
-            }
+                    if ($data->productTypeUnitId && is_numeric($data->productTypeUnitId)) {
+                        $id = (int)$data->productTypeUnitId;
+                        $unit = ProductTypeUnitsDB::getUnitOnID($id, true);
+                        if ($unit) {
+                            $unitValue->productTypeUnitId = $id;
+                        } else {
+                            $response = false;
+                        }
+                    } else {
+                        $response = false;
+                    }
+                    if ($data->value && is_numeric($data->value)) {
+                        $unitValue->value = (float)$data->value;
+                    } else {
+                        $response = false;
+                    }
 
-            if ($response && !$unitValue->hasValue()) {
-                $response = $unitValue->save();
+                    if ($response && !$unitValue->hasValue()) {
+                        $response = $unitValue->save();
+                    } else {
+                        $response = false;
+                    }
+                } else {
+                    $response = false;
+                }
             } else {
                 $response = false;
             }
@@ -154,6 +155,27 @@
             $json = json_encode([
                 'count' => count($types),
                 'response' => $types
+            ]);
+
+            $this->render($this->renderData(["response" => $json], "index_json"));
+        }
+
+        public function actionExistProduct()
+        {
+            $response = true;
+            $data = $this->request;
+
+            if ($data->sku) {
+                $product_check = ProductDB::getProductOnSKU($data->sku);
+                if ($product_check) {
+                    $response = false;
+                }
+            } else {
+                $response = false;
+            }
+
+            $json = json_encode([
+                'response' => $response
             ]);
 
             $this->render($this->renderData(["response" => $json], "index_json"));
